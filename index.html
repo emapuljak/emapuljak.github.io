@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tensorization Notes — A Literature Series</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Space+Mono:wght@400;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0e14;--ink:#e8ecf2;--muted:#8a96a8;--faint:#566175;--gold:#f4c95d;--card:#111824;--edge:#1f2a3a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1000px 700px at 80% -5%,rgba(244,201,93,0.07),transparent 60%),var(--bg);
+    color:var(--ink);font-family:'Sora',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+  header{max-width:900px;margin:0 auto;padding:90px 24px 30px;text-align:center}
+  .kicker{font-family:'Space Mono',monospace;letter-spacing:0.4em;text-transform:uppercase;font-size:11px;color:var(--gold);margin-bottom:20px}
+  h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.4rem,6vw,4.2rem);line-height:1;letter-spacing:-0.02em;margin-bottom:16px}
+  h1 em{font-style:italic;color:var(--gold)}
+  header p{color:var(--muted);font-weight:300;max-width:560px;margin:0 auto;font-size:1.05rem}
+  main{max-width:1080px;margin:40px auto 90px;padding:0 24px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+  a.card{display:block;text-decoration:none;color:inherit;background:linear-gradient(180deg,var(--card),#0d121b);
+    border:1px solid var(--edge);border-radius:16px;padding:22px 22px 20px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+  a.card:hover{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 18px 40px rgba(0,0,0,0.5)}
+  .card .date{font-family:'Space Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:0.1em}
+  .card h2{font-family:'Fraunces',serif;font-weight:600;font-size:1.35rem;line-height:1.15;margin:8px 0 10px}
+  .card p{color:var(--muted);font-size:13.5px;font-weight:300}
+  .card .tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+  .card .tags span{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.05em;color:var(--gold);
+    border:1px solid var(--edge);border-radius:30px;padding:3px 9px}
+  .empty{color:var(--faint);text-align:center;padding:60px 0;font-family:'Space Mono',monospace}
+  footer{text-align:center;padding:0 20px 60px;color:var(--faint);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.1em}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">A Literature Series</div>
+  <h1>Tensorization <em>Notes</em></h1>
+  <p>Interactive explainers and visual essays on low-rank and tensor-network methods for machine learning.</p>
+</header>
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">No entries yet — add one to <code>posts.json</code>.</div>
+</main>
+<footer>BUILT AS STATIC HTML · HOSTED ON GITHUB PAGES</footer>
+
+<script>
+  // The homepage is "data-driven": it reads posts.json and renders one card per
+  // entry. To publish a new chapter I only ever touch posts.json — never this file.
+  // The fetch path is RELATIVE, so it resolves correctly on both user and project sites.
+  fetch('posts.json')
+    .then(r => r.json())
+    .then(posts => {
+      posts.sort((a, b) => a.date < b.date ? 1 : -1); // newest first
+      const grid = document.getElementById('grid');
+      if (!posts.length) { document.getElementById('empty').style.display = 'block'; return; }
+      grid.innerHTML = posts.map(p => `
+        <a class="card" href="posts/${p.slug}/">
+          <span class="date">${p.date}</span>
+          <h2>${p.title}</h2>
+          <p>${p.blurb}</p>
+          <div class="tags">${(p.tags || []).map(t => `<span>${t}</span>`).join('')}</div>
+        </a>`).join('');
+    })
+    .catch(() => { document.getElementById('empty').style.display = 'block'; });
+</script>
+</body>
+</html>
