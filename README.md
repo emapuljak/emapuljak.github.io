@@ -1,4 +1,4 @@
-# Tensorization Notes
+# Research Notes
 
 A literature series of self-contained, interactive HTML explainers, published as
 static files on GitHub Pages. No build step, no framework — just files.
