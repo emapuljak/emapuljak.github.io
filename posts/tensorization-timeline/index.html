@@ -2,12 +2,677 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Tensorization Techniques — A Timeline Mind Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tensorization Techniques — Timeline Mind Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Space+Mono:wght@400;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e14;
+    --bg2:#0d121b;
+    --ink:#e8ecf2;
+    --muted:#8a96a8;
+    --faint:#566175;
+    --spine:#f4c95d;
+    --spine-glow:rgba(244,201,93,0.55);
+    --line:#1d2735;
+    /* model-family accents */
+    --cnn:#5ad1c2;       /* convolutional */
+    --mlp:#a78bfa;       /* dense / MLP */
+    --tf:#f472b6;        /* transformers */
+    --llm:#fb923c;       /* LLMs */
+    --rnn:#7dd3fc;       /* RNN / sequence */
+    --vit:#bef264;       /* vision transformers */
+    --tool:#94a3b8;      /* tooling / cross-cutting */
+    --card:#111824;
+    --card-edge:#1f2a3a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1100px 700px at 80% -5%, rgba(251,146,60,0.08), transparent 60%),
+      radial-gradient(900px 600px at 5% 12%, rgba(90,209,194,0.07), transparent 55%),
+      radial-gradient(1000px 800px at 50% 120%, rgba(167,139,250,0.07), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Sora',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* subtle grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:relative;z-index:2;
+    padding:72px 24px 30px;
+    text-align:center;
+    max-width:1000px;margin:0 auto;
+  }
+  .kicker{
+    font-family:'Space Mono',monospace;
+    letter-spacing:0.42em;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--spine);
+    margin-bottom:22px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:900;
+    font-size:clamp(2.4rem,6vw,4.6rem);
+    line-height:0.98;
+    letter-spacing:-0.02em;
+    margin-bottom:18px;
+  }
+  h1 em{font-style:italic;color:var(--spine)}
+  .sub{
+    color:var(--muted);
+    font-size:clamp(0.95rem,1.6vw,1.12rem);
+    max-width:660px;margin:0 auto;font-weight:300;
+  }
+  .byline{
+    margin-top:18px;font-family:'Space Mono',monospace;font-size:11px;
+    color:var(--faint);letter-spacing:0.15em;
+  }
+
+  /* ---------- LEGEND ---------- */
+  .legend{
+    position:relative;z-index:2;
+    display:flex;flex-wrap:wrap;gap:10px 14px;justify-content:center;
+    max-width:900px;margin:30px auto 10px;padding:0 20px;
+  }
+  .legend span{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:12px;color:var(--muted);
+    font-family:'Space Mono',monospace;letter-spacing:0.03em;
+    border:1px solid var(--card-edge);border-radius:40px;
+    padding:5px 12px;background:rgba(255,255,255,0.015);
+  }
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{
+    position:relative;z-index:2;
+    max-width:1180px;margin:48px auto 60px;padding:0 20px;
+  }
+  /* central spine */
+  .timeline::before{
+    content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;
+    transform:translateX(-50%);
+    background:linear-gradient(var(--spine-glow),var(--spine),var(--spine-glow));
+    box-shadow:0 0 14px 1px var(--spine-glow);
+    border-radius:2px;
+  }
+
+  .era{position:relative;margin:0 0 8px}
+  .year{
+    position:relative;z-index:5;
+    text-align:center;margin:46px 0 30px;
+  }
+  .year span{
+    display:inline-block;
+    font-family:'Fraunces',serif;font-weight:900;
+    font-size:1.55rem;letter-spacing:0.02em;
+    color:var(--bg);
+    background:var(--spine);
+    padding:6px 22px;border-radius:40px;
+    box-shadow:0 0 22px var(--spine-glow);
+  }
+  .year small{
+    display:block;margin-top:10px;color:var(--faint);
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;
+    text-transform:uppercase;
+  }
+
+  /* node row */
+  .node{
+    position:relative;width:50%;padding:14px 46px;
+    display:flex;
+  }
+  .node.left{left:0;justify-content:flex-end;text-align:right}
+  .node.right{left:50%;justify-content:flex-start}
+
+  /* connector dot on spine */
+  .node::after{
+    content:"";position:absolute;top:30px;
+    width:15px;height:15px;border-radius:50%;
+    background:var(--bg);border:3px solid var(--dot,var(--spine));
+    box-shadow:0 0 12px 1px var(--dot,var(--spine));
+    z-index:6;
+  }
+  .node.left::after{right:-7.5px}
+  .node.right::after{left:-7.5px}
+  /* connector line */
+  .node::before{
+    content:"";position:absolute;top:36px;height:2px;width:34px;
+    background:linear-gradient(90deg,var(--dot,var(--spine)),transparent);
+  }
+  .node.left::before{right:0;background:linear-gradient(270deg,var(--dot,var(--spine)),transparent)}
+  .node.right::before{left:0}
+
+  .card{
+    position:relative;
+    background:linear-gradient(180deg,var(--card),var(--bg2));
+    border:1px solid var(--card-edge);
+    border-left:3px solid var(--dot,var(--spine));
+    border-radius:14px;
+    padding:16px 18px 17px;
+    max-width:430px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .node.left .card{border-left:none;border-right:3px solid var(--dot,var(--spine))}
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 16px 40px rgba(0,0,0,0.55), 0 0 0 1px var(--dot,var(--spine));
+  }
+  .tag{
+    display:inline-block;font-family:'Space Mono',monospace;
+    font-size:10px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--dot,var(--spine));
+    border:1px solid var(--dot,var(--spine));
+    border-radius:30px;padding:2px 9px;margin-bottom:10px;
+    opacity:0.95;
+  }
+  .card h3{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:1.18rem;line-height:1.15;margin-bottom:4px;letter-spacing:-0.01em;
+  }
+  .card .meta{
+    font-family:'Space Mono',monospace;font-size:11px;color:var(--faint);
+    margin-bottom:9px;
+  }
+  .card p{font-size:13.5px;color:var(--muted);font-weight:300}
+  .card .stat{
+    margin-top:11px;display:flex;flex-wrap:wrap;gap:6px;
+  }
+  .node.left .stat{justify-content:flex-end}
+  .card .stat b{
+    font-family:'Space Mono',monospace;font-weight:700;font-size:11px;
+    color:var(--ink);background:rgba(255,255,255,0.05);
+    border:1px solid var(--card-edge);border-radius:6px;padding:3px 8px;
+    letter-spacing:0.02em;
+  }
+
+  /* reveal animation */
+  .node{opacity:0;transform:translateY(26px);transition:opacity .6s ease, transform .6s ease}
+  .node.in{opacity:1;transform:translateY(0)}
+
+  /* ---------- TAXONOMY STRIP ---------- */
+  .taxo{
+    position:relative;z-index:2;max-width:1180px;margin:30px auto 70px;padding:0 20px;
+  }
+  .taxo h2,.coda h2{
+    font-family:'Fraunces',serif;font-weight:900;font-size:clamp(1.6rem,3.5vw,2.4rem);
+    text-align:center;margin-bottom:8px;letter-spacing:-0.01em;
+  }
+  .taxo .lead{text-align:center;color:var(--muted);font-weight:300;max-width:620px;margin:0 auto 34px;font-size:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .dcard{
+    background:linear-gradient(180deg,var(--card),var(--bg2));
+    border:1px solid var(--card-edge);border-radius:14px;padding:18px 18px 16px;
+    border-top:3px solid var(--dc,var(--spine));
+    transition:transform .2s ease;
+  }
+  .dcard:hover{transform:translateY(-4px)}
+  .dcard h4{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.05em;color:var(--dc,var(--spine));margin-bottom:7px}
+  .dcard .full{font-size:11px;color:var(--faint);font-family:'Space Mono',monospace;margin-bottom:9px}
+  .dcard p{font-size:12.5px;color:var(--muted);font-weight:300}
+  .dcard .home{
+    margin-top:11px;font-size:11px;color:var(--ink);
+    font-family:'Space Mono',monospace;border-top:1px dashed var(--card-edge);padding-top:9px;
+  }
+  .dcard .home b{color:var(--dc,var(--spine))}
+
+  /* ---------- CODA ---------- */
+  .coda{position:relative;z-index:2;max-width:900px;margin:0 auto 90px;padding:0 24px;text-align:center}
+  .coda p{color:var(--muted);font-weight:300;font-size:14px;max-width:680px;margin:14px auto 0}
+  .arc{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:30px;
+    font-family:'Space Mono',monospace;font-size:12px;
+  }
+  .arc span{
+    padding:8px 14px;border:1px solid var(--card-edge);border-radius:40px;
+    background:rgba(255,255,255,0.015);color:var(--muted);
+  }
+  .arc span b{color:var(--spine)}
+  footer{
+    position:relative;z-index:2;text-align:center;padding:30px 20px 60px;
+    color:var(--faint);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.1em;
+  }
+  footer a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--faint)}
+
+  /* ---------- RESPONSIVE: collapse to single rail ---------- */
+  @media(max-width:760px){
+    .timeline::before{left:22px}
+    .node,.node.left,.node.right{width:100%;left:0;justify-content:flex-start;text-align:left;padding:10px 0 10px 50px}
+    .node.left .card{border-right:none;border-left:3px solid var(--dot,var(--spine))}
+    .node.left .stat{justify-content:flex-start}
+    .node::after,.node.left::after,.node.right::after{left:14.5px;right:auto}
+    .node::before,.node.left::before,.node.right::before{left:30px;right:auto;width:20px;background:linear-gradient(90deg,var(--dot,var(--spine)),transparent)}
+    .card{max-width:none}
+    .year{text-align:left;padding-left:6px}
+  }
+</style>
 </head>
 <body>
-<!-- PLACEHOLDER: Paste the timeline HTML here (replace this whole file),
-     keeping the series-nav.js include below just before </body>. -->
-<p>Paste the timeline HTML here.</p>
+
+<header>
+  <div class="kicker">Overview · Companion Map</div>
+  <h1>Tensorization Techniques<br><em>A Timeline Mind Map</em></h1>
+  <p class="sub">A decade of low-rank &amp; tensor-network compression for neural networks — traced chronologically, branched by the model family each method calls home.</p>
+  <div class="byline">2015 – 2026 · CP · TUCKER · TT · TR · HT · BTD · MPO · SVD</div>
+</header>
+
+<div class="legend">
+  <span><i style="background:var(--cnn)"></i>Convolutional (CNN)</span>
+  <span><i style="background:var(--mlp)"></i>Dense / MLP</span>
+  <span><i style="background:var(--rnn)"></i>RNN / Sequence</span>
+  <span><i style="background:var(--tf)"></i>Transformer</span>
+  <span><i style="background:var(--vit)"></i>Vision Transformer</span>
+  <span><i style="background:var(--llm)"></i>Large Language Model</span>
+  <span><i style="background:var(--tool)"></i>Cross-cutting / Tooling</span>
+</div>
+
+<main class="timeline" id="tl">
+
+  <!-- ===================== 2015 ===================== -->
+  <div class="era">
+    <div class="year"><span>2015</span><small>Foundations — kernels &amp; weight matrices go low-rank</small></div>
+
+    <div class="node left" style="--dot:var(--cnn)">
+      <div class="card">
+        <span class="tag">CNN · CP</span>
+        <h3>CP-Decomposed Convolutions</h3>
+        <div class="meta">Lebedev, Ganin, Rakhuba, Oseledets, Lempitsky · ICLR</div>
+        <p>The 4D conv kernel is written as a sum of rank-one tensors, splitting one costly convolution into four cheap ones (1×1 → separable spatial → 1×1).</p>
+        <div class="stat"><b>4× speedup</b><b>~1% top-5 loss</b><b>8.5× CPU (char-CNN)</b></div>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--mlp)">
+      <div class="card">
+        <span class="tag">MLP · TT</span>
+        <h3>Tensorizing Neural Networks (TT-Layer)</h3>
+        <div class="meta">Novikov, Podoprikhin, Osokin, Vetrov · NeurIPS</div>
+        <p>A dense FC matrix is reshaped to a high-order tensor stored in Tensor-Train format. The cost ceiling drops from M·N to max{M,N}.</p>
+        <div class="stat"><b>200,000× FC matrix</b><b>7× whole net</b><b>accuracy preserved</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2016 ===================== -->
+  <div class="era">
+    <div class="year"><span>2016</span><small>The one-shot whole-network recipe (deck anchor)</small></div>
+
+    <div class="node left" style="--dot:var(--cnn)">
+      <div class="card">
+        <span class="tag">CNN · Tucker-2 · ★ deck anchor</span>
+        <h3>One-Shot Tucker Compression</h3>
+        <div class="meta">Kim, Park, Yoo, Choi, Yang, Shin</div>
+        <p>Three steps: rank selection via global analytic <b>VBMF</b> → Tucker-2 on each kernel → fine-tune the <em>entire</em> network. Tucker-2 mid-network, Tucker-1 (SVD) elsewhere.</p>
+        <div class="stat"><b>AlexNet / VGG-S</b><b>GoogLeNet</b><b>on-smartphone</b></div>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--mlp)">
+      <div class="card">
+        <span class="tag">MLP + CNN · TT</span>
+        <h3>Ultimate Tensorization</h3>
+        <div class="meta">Garipov, Podoprikhin, Novikov, Vetrov</div>
+        <p>Extends the TT-layer to compress convolutional <em>and</em> fully-connected layers under one unified format.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2017 ===================== -->
+  <div class="era">
+    <div class="year"><span>2017</span><small>Sequence models — where compression pays off most</small></div>
+
+    <div class="node left" style="--dot:var(--rnn)">
+      <div class="card">
+        <span class="tag">RNN · TT</span>
+        <h3>TT-RNN for Video</h3>
+        <div class="meta">Yang, Krompass, Tresp · ICML</div>
+        <p>Recurrent weight reuse amplifies the payoff of decomposition — tensorizing the huge input-to-hidden matrix yields enormous compression with retained accuracy.</p>
+        <div class="stat"><b>video classification</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2018 ===================== -->
+  <div class="era">
+    <div class="year"><span>2018</span><small>Richer topologies — rings &amp; comparative studies</small></div>
+
+    <div class="node right" style="--dot:var(--cnn)">
+      <div class="card">
+        <span class="tag">CNN · Tensor Ring</span>
+        <h3>Wide Compression: Tensor Ring Nets</h3>
+        <div class="meta">Wang, Sun, Eriksson, Wang, Aggarwal</div>
+        <p>Closes the TT chain into a ring for more flexible rank allocation and stronger compression of both conv and FC layers.</p>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--rnn)">
+      <div class="card">
+        <span class="tag">RNN · CP/Tucker/TT</span>
+        <h3>Compressing GRUs — A Comparison</h3>
+        <div class="meta">Tjandra, Sakti, Nakamura</div>
+        <p>Head-to-head of CP, Tucker and TT GRUs at equal parameter budgets — TT-GRU comes out ahead.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2019 ===================== -->
+  <div class="era">
+    <div class="year"><span>2019</span><small>Tensorization reaches attention</small></div>
+
+    <div class="node right" style="--dot:var(--tf)">
+      <div class="card">
+        <span class="tag">Transformer · BTD + Tucker</span>
+        <h3>Tensorized Transformer (Multi-linear Attention)</h3>
+        <div class="meta">Ma, Zhang, Zhang, Duan, Hou, Zhou, Song · NeurIPS</div>
+        <p>Recasts dot-product attention as a single-block Tucker decomposition, then compresses multi-head attention with Block-Term Decomposition, sharing factors across heads.</p>
+        <div class="stat"><b>compresses + improves</b><b>PTB · WikiText-103 · WMT</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2020 ===================== -->
+  <div class="era">
+    <div class="year"><span>2020</span><small>Fixing instability &amp; the deepest sequence wins</small></div>
+
+    <div class="node left" style="--dot:var(--cnn)">
+      <div class="card">
+        <span class="tag">CNN · Stable CP</span>
+        <h3>Stable Low-Rank CP Decomposition</h3>
+        <div class="meta">Phan et al. · ECCV</div>
+        <p>Tames CP's notorious degeneracy/instability with a sensitivity-aware formulation, making aggressive rank-one compression usable again.</p>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--rnn)">
+      <div class="card">
+        <span class="tag">RNN · Hierarchical Tucker</span>
+        <h3>HT-LSTM</h3>
+        <div class="meta">Yin, Wang, Ding, et al.</div>
+        <p>A binary-tree of cores that beats TT, TR and BT formats on both compression ratio and accuracy for recurrent nets.</p>
+        <div class="stat"><b>best-in-class RNN</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2021 ===================== -->
+  <div class="era">
+    <div class="year"><span>2021</span><small>Pre-trained language models meet MPO</small></div>
+
+    <div class="node right" style="--dot:var(--tf)">
+      <div class="card">
+        <span class="tag">Transformer / PLM · MPO</span>
+        <h3>Lightweight Fine-tuning via Matrix Product Operators</h3>
+        <div class="meta">Liu, Gao, Zhao, Xie, Lu, Wen · ACL</div>
+        <p>Each weight splits into a big <em>central</em> tensor (frozen) + small <em>auxiliary</em> tensors (tuned). "Dimension squeezing" controls error across stacked layers.</p>
+        <div class="stat"><b>91% fewer tune params</b><b>BERT · ALBERT family</b></div>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--cnn)">
+      <div class="card">
+        <span class="tag">CNN · ADMM</span>
+        <h3>ADMM-Constrained Low-Rank Training</h3>
+        <div class="meta">Augmented-Lagrangian structure imposition</div>
+        <p>𝓛<sub>ADMM</sub>(W,Z,U)=𝓛(W)+g(Z)+(ρ/2)‖W−Z+U‖² forces low TT/Tucker rank <em>during</em> training, then decomposes &amp; fine-tunes.</p>
+        <div class="stat"><b>+1.96% top-1 (CIFAR-100)</b><b>2.3× compression</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2022 ===================== -->
+  <div class="era">
+    <div class="year"><span>2022</span><small>Hardware-aware &amp; automatic rank search (deck anchor)</small></div>
+
+    <div class="node right" style="--dot:var(--tf)">
+      <div class="card">
+        <span class="tag">Transformer · NAS · ★ deck anchor</span>
+        <h3>HEAT — Hardware-Efficient Automatic Tensor Decomposition</h3>
+        <div class="meta">Gu, Keller, Kossaifi, Anandkumar, Khailany, Pan · NVIDIA</div>
+        <p>Three levels: (1) Pareto-optimal <b>shape</b> from a hardware cost table; (2) a weight-sharing <b>Rank SuperNet</b>; (3) knowledge-distillation retraining of the searched factorized model.</p>
+        <div class="stat"><b>5.7× lower energy-delay</b><b>&lt;1.1% acc loss</b><b>BERT · SQuAD · SST-2</b></div>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--cnn)">
+      <div class="card">
+        <span class="tag">CNN · Hierarchical Tucker-2</span>
+        <h3>Hierarchical Tucker-2 Conv Compression</h3>
+        <div class="meta">Gabor &amp; Zdunek · Knowledge-Based Systems</div>
+        <p>Each conv layer becomes four smaller "Kruskal" sublayers — large parameter &amp; FLOPs reduction at marginal accuracy cost.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2023 ===================== -->
+  <div class="era">
+    <div class="year"><span>2023</span><small>The pivot to LLMs — training-free SVD</small></div>
+
+    <div class="node right" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · Activation-aware SVD</span>
+        <h3>ASVD</h3>
+        <div class="meta">Yuan et al.</div>
+        <p>First to compress LLM weights by decomposition: scales each matrix by an activation-derived diagonal before SVD, and shrinks the KV-cache by factorizing K/V projections.</p>
+        <div class="stat"><b>training-free</b><b>up to 50% KV-cache</b></div>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--vit)">
+      <div class="card">
+        <span class="tag">Vision Transformer · TT/Tucker</span>
+        <h3>FacT — Factor-Tuning</h3>
+        <div class="meta">Jie &amp; Deng · AAAI</div>
+        <p>Aggregates ViT weights into one 3D tensor and tunes only the decomposed <em>increment</em> (TT or Tucker). Matches SOTA at a fraction of the trainable parameters.</p>
+        <div class="stat"><b>5× fewer params vs NOAH</b><b>tiny: 8K params (0.01%)</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2024 ===================== -->
+  <div class="era">
+    <div class="year"><span>2024</span><small>Tensor networks &amp; tensorized LoRA explode</small></div>
+
+    <div class="node right" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · MPO / Tensor Network</span>
+        <h3>CompactifAI</h3>
+        <div class="meta">Tomut, Jahromi, Singh … Orús · Multiverse Computing</div>
+        <p>Replaces self-attention &amp; MLP weights of each decoder block with Matrix Product Operators; late layers compress to ~10%. "Healing" needs &lt; 1 epoch.</p>
+        <div class="stat"><b>93% memory ↓ (LLaMA-2 7B)</b><b>70% params ↓</b><b>25% faster inference</b></div>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · TT-LoRA</span>
+        <h3>TT-LoRA &amp; LoRETTA</h3>
+        <div class="meta">Anjum et al. (LANL) · Yang et al. (NAACL)</div>
+        <p>Decompose the LoRA update ΔW directly into Tensor-Train cores — no adapter matrices. A 768×2304 ΔW collapses from 1.77M to 1,135 params.</p>
+        <div class="stat"><b>1560× ΔW compression</b><b>100× fewer than LoRA</b><b>~195 KB adapters</b></div>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · Multi-layer Tensor</span>
+        <h3>LoTR</h3>
+        <div class="meta">Bershatsky, Cherniuk et al.</div>
+        <p>Represents adapters across <em>many layers jointly</em> as one tensor decomposition with shared factors — cost O(Lr²+dr) decouples depth from width.</p>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--tool)">
+      <div class="card">
+        <span class="tag">Cross-cutting · Activations</span>
+        <h3>Activation-Map Compression (HOSVD)</h3>
+        <div class="meta">NeurIPS</div>
+        <p>Decomposes activation maps (not weights) to slash on-device backprop memory, with convergence guarantees — architecture-agnostic.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2025 ===================== -->
+  <div class="era">
+    <div class="year"><span>2025</span><small>Truncation-aware SVD, adaptive ranks &amp; commercial scale</small></div>
+
+    <div class="node right" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · Truncation-aware SVD</span>
+        <h3>SVD-LLM (+ V2, AdaSVD, ARA)</h3>
+        <div class="meta">Wang et al. · ICLR + follow-ups</div>
+        <p>Data-whitening ties each singular value directly to its truncation loss, beating ASVD/FWSVD at high compression; adaptive variants allocate rank per layer. Orthogonal to quantization.</p>
+        <div class="stat"><b>beats from-scratch 3B</b><b>composable w/ INT4</b></div>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · Commercial</span>
+        <h3>Multiverse "Slim" Models + €189M Series B</h3>
+        <div class="meta">Llama 3.1-8B / 3.3-70B Slim</div>
+        <p>CompactifAI productized: ~80% compressed, 60% fewer params, ~40% faster inference, ~50% cost cut (vendor-reported). Major funding signals tensor-network compression going to market.</p>
+        <div class="stat"><b>€189M (~$215M)</b><b>vendor figures</b></div>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · Unified Tensor LoRA</span>
+        <h3>TensLoRA &amp; TensorGuide</h3>
+        <div class="meta">Marmoret et al. · 2025</div>
+        <p>A framework that aggregates LoRA updates into higher-order tensors (Att / QKV / Depth), generalizing FacT, LoTR and LoRTA with mode-specific compression.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2026 ===================== -->
+  <div class="era">
+    <div class="year"><span>2026</span><small>Edge fine-tuning, data-aware norms &amp; open frontiers</small></div>
+
+    <div class="node left" style="--dot:var(--cnn)">
+      <div class="card">
+        <span class="tag">CNN · Edge · TT-SVD</span>
+        <h3>LoRA-Edge &amp; Distribution-Aware Decomposition</h3>
+        <div class="meta">arXiv 2511.03765 · 2511.04494 (late 2025 / 2026)</div>
+        <p>TT-SVD adapters fine-tune on-device within 4.7% of full tuning while updating ≤1.49% of params; distribution-aware methods minimize a data-aware norm instead of Frobenius.</p>
+        <div class="stat"><b>Jetson Orin Nano</b><b>1.4–3.8× faster converge</b></div>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--tool)">
+      <div class="card">
+        <span class="tag">Frontier · Position</span>
+        <h3>Open Challenges</h3>
+        <div class="meta">Hamreras, Singh &amp; Orús — position paper (2505.20132)</div>
+        <p>Tensorization targets <em>correlation space</em>, not neuron count. Open: trainable factors, real-hardware speedups, principled topology search, fully-tensorized nets, exotic TNs (MERA / PEPS), interpretability via bond indices.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ===================== TAXONOMY STRIP ===================== -->
+<section class="taxo">
+  <h2>The Decomposition Toolkit</h2>
+  <p class="lead">Ordered by structural complexity — each family has an architecture where it works best.</p>
+  <div class="grid">
+    <div class="dcard" style="--dc:var(--tool)">
+      <h4>SVD</h4>
+      <div class="full">Low-rank matrix factorization</div>
+      <p>The order-2 base case, W ≈ UΣVᵀ. Tucker-1 is identical to SVD.</p>
+      <div class="home">Home: <b>LLM weights</b></div>
+    </div>
+    <div class="dcard" style="--dc:var(--cnn)">
+      <h4>CP</h4>
+      <div class="full">CANDECOMP / PARAFAC</div>
+      <p>Sum of rank-one tensors — most aggressive, but unstable &amp; hard to rank.</p>
+      <div class="home">Home: <b>Conv kernels</b></div>
+    </div>
+    <div class="dcard" style="--dc:var(--cnn)">
+      <h4>Tucker</h4>
+      <div class="full">Core tensor × factor matrices</div>
+      <p>The robust default; Tucker-2 on channel modes is the conv workhorse.</p>
+      <div class="home">Home: <b>CNNs</b></div>
+    </div>
+    <div class="dcard" style="--dc:var(--mlp)">
+      <h4>TT / MPO</h4>
+      <div class="full">Tensor-Train / Matrix Product Operator</div>
+      <p>A chain of 3-index cores, O(dnr²) — identical to the MPO of physics.</p>
+      <div class="home">Home: <b>FC, embeddings, transformers</b></div>
+    </div>
+    <div class="dcard" style="--dc:var(--cnn)">
+      <h4>TR</h4>
+      <div class="full">Tensor Ring</div>
+      <p>TT with periodic boundary — more flexible rank allocation.</p>
+      <div class="home">Home: <b>Wide conv / FC</b></div>
+    </div>
+    <div class="dcard" style="--dc:var(--rnn)">
+      <h4>HT</h4>
+      <div class="full">Hierarchical Tucker</div>
+      <p>Binary tree of cores; tops the charts for recurrent nets.</p>
+      <div class="home">Home: <b>RNN / LSTM</b></div>
+    </div>
+    <div class="dcard" style="--dc:var(--tf)">
+      <h4>BTD</h4>
+      <div class="full">Block-Term Decomposition</div>
+      <p>A sum of Tucker blocks; interpolates between CP and Tucker.</p>
+      <div class="home">Home: <b>Multi-head attention</b></div>
+    </div>
+    <div class="dcard" style="--dc:var(--tool)">
+      <h4>Kronecker</h4>
+      <div class="full">W ≈ A ⊗ B</div>
+      <p>Structured products for RNN (KCP) and LLM weight compression.</p>
+      <div class="home">Home: <b>RNN / LLM</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CODA ===================== -->
+<section class="coda">
+  <h2>The Through-Line</h2>
+  <p>One arc runs the whole decade: the <em>same</em> low-rank idea migrates to whatever layer is currently the biggest — from convolution kernels, to fully-connected matrices, to attention, and finally to the colossal weight matrices of language models, where it now meets quantization and pruning as one composable axis of compression.</p>
+  <div class="arc">
+    <span><b>2015–18</b> Kernels &amp; FC</span>
+    <span><b>2017–20</b> Sequence models</span>
+    <span><b>2019–22</b> Attention</span>
+    <span><b>2023–26</b> LLMs &amp; PEFT</span>
+  </div>
+  <p style="margin-top:26px;font-size:13px;color:var(--faint)">Vendor figures (CompactifAI / Multiverse) are company-reported. FLOPs reductions do not always equal wall-clock speedups, and most strong results assume a fine-tuning / "healing" step.</p>
+</section>
+
+<footer>
+  COMPANION MAP TO “OVERVIEW · TENSORIZATION TECHNIQUES” — EMA PULJAK &nbsp;·&nbsp; SYNTHESIZED FROM THE 2015–2026 RESEARCH LANDSCAPE
+</footer>
+
+<script>
+  // Staggered reveal of timeline nodes on scroll
+  const nodes = document.querySelectorAll('.node');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0.18, rootMargin:'0px 0px -8% 0px'});
+  nodes.forEach(n=>io.observe(n));
+</script>
+
 <script src="../../assets/series-nav.js"></script>
 </body>
 </html>
