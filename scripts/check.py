@@ -99,6 +99,18 @@ def check_manifest():
             if not isinstance(tag, str):
                 err(f"{where} tags[{j}] must be a string")
 
+        # 'pdf' is optional: a relative path to a PDF committed in the repo.
+        pdf = entry.get("pdf")
+        if pdf is not None:
+            if not isinstance(pdf, str):
+                err(f"{where} field 'pdf' must be a string")
+            elif pdf.startswith("/") or "://" in pdf:
+                err(f"{where} pdf '{pdf}' must be a relative path (no leading '/' or host)")
+            elif not pdf.lower().endswith(".pdf"):
+                err(f"{where} pdf '{pdf}' should point to a .pdf file")
+            elif not os.path.isfile(os.path.join(ROOT, pdf)):
+                err(f"{where} pdf '{pdf}' file not found in the repo")
+
     return data
 
 

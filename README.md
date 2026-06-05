@@ -36,6 +36,23 @@ static files on GitHub Pages. No build step, no framework — just files.
 4. Commit and push. The landing page shows the new box (newest first) and the
    prev/next navigation updates itself — no other file needs editing.
 
+### Attaching a PDF (optional)
+
+GitHub Pages serves any committed file as-is — no database needed. To attach a
+downloadable PDF to a post:
+
+1. Drop the PDF inside the post's folder, e.g. `posts/<slug>/paper.pdf`.
+2. Add a `"pdf"` field to that post's entry in `posts.json` with the path
+   **relative to the site root**:
+
+   ```json
+   { "slug": "your-slug", "title": "…", "pdf": "posts/your-slug/paper.pdf", … }
+   ```
+
+When `pdf` is set, a "Download PDF" link appears on the homepage card (below the
+blurb) and a "PDF" link appears in the top bar of the post itself. Omit the field
+and nothing is shown. Keep the path relative so it works at the domain root.
+
 ## Checks (CI)
 
 Before pushing, you can run the same checks CI runs:

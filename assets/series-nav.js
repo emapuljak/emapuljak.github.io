@@ -21,10 +21,11 @@
     .then(function (posts) {
       posts.sort(function (a, b) { return a.date < b.date ? 1 : -1; }); // newest first
       var i = posts.findIndex(function (p) { return p.slug === slug; });
+      var cur = i >= 0 ? posts[i] : null;
       var prev = i >= 0 ? posts[i + 1] : null; // older chapter
       var next = i > 0 ? posts[i - 1] : null;  // newer chapter
       injectStyles();
-      injectTopBar(root);
+      injectTopBar(root, cur && cur.pdf ? cur.pdf : null);
       injectFooterNav(root, prev, next);
     })
     .catch(function (e) { console.warn("series-nav: could not load posts.json", e); });
@@ -35,6 +36,8 @@
       "padding:10px 18px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.08em;" +
       "background:rgba(10,14,20,0.85);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a3a;color:#8a96a8}" +
       ".series-bar a{color:#f4c95d;text-decoration:none}.series-bar a:hover{text-decoration:underline}" +
+      ".series-bar .series-pdf{margin-left:auto;border:1px solid #1f2a3a;border-radius:30px;padding:4px 12px}" +
+      ".series-bar .series-pdf:hover{text-decoration:none;border-color:#f4c95d}" +
       ".series-footnav{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;max-width:900px;" +
       "margin:40px auto 70px;padding:0 24px;font-family:'Space Mono',monospace;font-size:12px}" +
       ".series-footnav a{display:block;max-width:46%;color:#e8ecf2;text-decoration:none;border:1px solid #1f2a3a;" +
@@ -45,10 +48,14 @@
     document.head.appendChild(s);
   }
 
-  function injectTopBar(root) {
+  function injectTopBar(root, pdf) {
     var bar = document.createElement("div");
     bar.className = "series-bar";
-    bar.innerHTML = '<a href="' + root + '">← Back to the series</a>';
+    var html = '<a href="' + root + '">← Back to the series</a>';
+    if (pdf) {
+      html += '<a class="series-pdf" href="' + root + pdf + '" target="_blank" rel="noopener">📄 PDF</a>';
+    }
+    bar.innerHTML = html;
     document.body.insertBefore(bar, document.body.firstChild);
   }
 
