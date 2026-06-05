@@ -152,7 +152,11 @@ def check_lowercase():
         if not os.path.isdir(base):
             continue
         for dirpath, dirnames, filenames in os.walk(base):
-            for name in list(dirnames) + filenames:
+            # Skip dotfiles/dot-dirs (e.g. .DS_Store) — git ignores them and they
+            # are not part of the published site.
+            dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+            names = dirnames + [f for f in filenames if not f.startswith(".")]
+            for name in names:
                 if name != name.lower():
                     err(f"{rel(os.path.join(dirpath, name))} is not lowercase "
                         f"(GitHub Pages is case-sensitive)")
