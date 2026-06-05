@@ -1,9 +1,10 @@
 [
   {
     "slug": "tensorization-timeline",
-    "title": "Tensorization Techniques — A Timeline Mind Map",
+    "title": "Tensorization Techniques — Timeline Map",
     "date": "2026-06-04",
-    "blurb": "A decade of low-rank and tensor-network compression for neural networks, traced chronologically and branched by the model family each method calls home.",
-    "tags": ["tensor decomposition", "compression"]
+    "blurb": "A decade of low-rank and tensor-network compression for neural networks, traced chronologically and branched by the model family.",
+    "tags": ["tensor decomposition", "compression"],
+    "pdf": "posts/tensorization-timeline/tensorization-overview.pdf"
   }
 ]

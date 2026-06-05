@@ -99,6 +99,18 @@ def check_manifest():
             if not isinstance(tag, str):
                 err(f"{where} tags[{j}] must be a string")
 
+        # 'pdf' is optional: a relative path to a PDF committed in the repo.
+        pdf = entry.get("pdf")
+        if pdf is not None:
+            if not isinstance(pdf, str):
+                err(f"{where} field 'pdf' must be a string")
+            elif pdf.startswith("/") or "://" in pdf:
+                err(f"{where} pdf '{pdf}' must be a relative path (no leading '/' or host)")
+            elif not pdf.lower().endswith(".pdf"):
+                err(f"{where} pdf '{pdf}' should point to a .pdf file")
+            elif not os.path.isfile(os.path.join(ROOT, pdf)):
+                err(f"{where} pdf '{pdf}' file not found in the repo")
+
     return data
 
 
@@ -140,7 +152,11 @@ def check_lowercase():
         if not os.path.isdir(base):
             continue
         for dirpath, dirnames, filenames in os.walk(base):
-            for name in list(dirnames) + filenames:
+            # Skip dotfiles/dot-dirs (e.g. .DS_Store) — git ignores them and they
+            # are not part of the published site.
+            dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+            names = dirnames + [f for f in filenames if not f.startswith(".")]
+            for name in names:
                 if name != name.lower():
                     err(f"{rel(os.path.join(dirpath, name))} is not lowercase "
                         f"(GitHub Pages is case-sensitive)")
