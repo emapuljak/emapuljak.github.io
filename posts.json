@@ -5,6 +5,6 @@
     "date": "2026-06-04",
     "blurb": "A decade of low-rank and tensor-network compression for neural networks, traced chronologically and branched by the model family.",
     "tags": ["tensor decomposition", "compression"],
-    "pdf": "posts/tensorization-timeline/Tensorization-Overview.pdf"
+    "pdf": "posts/tensorization-timeline/tensorization-overview.pdf"
   }
 ]
