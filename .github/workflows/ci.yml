@@ -1,0 +1,32 @@
+name: CI
+
+# Runs the same checks you can run locally with `python3 scripts/check.py`,
+# plus an HTML5 validation pass over every page. No build, no deploy — Pages
+# still deploys from the branch on its own.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Structural checks (manifest, links, naming)
+        run: python3 scripts/check.py
+
+      - name: Validate HTML
+        uses: Cyb3r-Jak3/html5validator-action@v7.2.0
+        with:
+          root: .
+          # The series-nav bar is injected by JS at runtime, so static HTML
+          # validation only sees the authored markup — which is what we want.

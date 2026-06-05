@@ -36,6 +36,20 @@ static files on GitHub Pages. No build step, no framework — just files.
 4. Commit and push. The landing page shows the new box (newest first) and the
    prev/next navigation updates itself — no other file needs editing.
 
+## Checks (CI)
+
+Before pushing, you can run the same checks CI runs:
+
+```bash
+python3 scripts/check.py
+```
+
+It verifies `posts.json` is valid, every slug has a matching
+`posts/<slug>/index.html` that includes the nav script, there are no
+root-absolute links, and all filenames are lowercase. On every push and pull
+request, `.github/workflows/ci.yml` runs this script and then validates the
+HTML of every page. CI only checks — GitHub Pages still deploys on its own.
+
 ## Conventions that keep it working
 
 - Use only RELATIVE links between pages — never `/posts/...` (root-absolute links
