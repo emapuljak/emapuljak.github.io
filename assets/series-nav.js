@@ -16,6 +16,12 @@
   var match = location.pathname.match(/posts\/([^\/]+)\//);
   var slug = match ? match[1] : null;
 
+  // Theme is shared with the homepage via the localStorage 'theme' key. Apply it
+  // and inject the light palette synchronously so the page does not flash.
+  var THEME_KEY = "theme";
+  applyStoredTheme();
+  injectThemeStyles();
+
   fetch(root + "posts.json")
     .then(function (r) { return r.json(); })
     .then(function (posts) {
@@ -56,6 +62,9 @@
       html += '<a class="series-pdf" href="' + root + pdf + '" target="_blank" rel="noopener">📄 PDF</a>';
     }
     bar.innerHTML = html;
+    var toggle = makeThemeToggle();
+    if (!pdf) toggle.style.marginLeft = "auto"; // push to the right when no PDF link
+    bar.appendChild(toggle);
     document.body.insertBefore(bar, document.body.firstChild);
   }
 
@@ -71,5 +80,55 @@
       : "<span></span>";
     nav.innerHTML = left + right;
     document.body.appendChild(nav);
+  }
+
+  function getTheme() {
+    try { return localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark"; }
+    catch (e) { return "dark"; }
+  }
+
+  function applyStoredTheme() {
+    if (getTheme() === "light") document.documentElement.setAttribute("data-theme", "light");
+    else document.documentElement.removeAttribute("data-theme");
+  }
+
+  function syncToggle(btn) {
+    btn.textContent = document.documentElement.getAttribute("data-theme") === "light" ? "☾" : "☀";
+  }
+
+  function makeThemeToggle() {
+    var btn = document.createElement("button");
+    btn.className = "series-theme";
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Toggle light/dark theme");
+    syncToggle(btn);
+    btn.addEventListener("click", function () {
+      var light = document.documentElement.getAttribute("data-theme") === "light";
+      if (light) document.documentElement.removeAttribute("data-theme");
+      else document.documentElement.setAttribute("data-theme", "light");
+      try { localStorage.setItem(THEME_KEY, light ? "dark" : "light"); } catch (e) {}
+      syncToggle(btn);
+    });
+    return btn;
+  }
+
+  function injectThemeStyles() {
+    var css =
+      ':root[data-theme="light"]{' +
+        "--bg:#f7f8fa;--bg2:#eef1f5;--ink:#1a1f28;--muted:#4a5666;--faint:#7a8696;" +
+        "--card:#ffffff;--card-edge:#e2e6ec;--line:#e2e6ec;" +
+        "--spine:#b8860b;--spine-glow:rgba(184,134,11,0.30);" +
+        "--cnn:#0f9b8a;--mlp:#7c3aed;--tf:#db2777;--llm:#ea580c;--rnn:#0284c7;--vit:#4d7c0f;--tool:#475569}" +
+      ".series-theme{cursor:pointer;background:transparent;color:#f4c95d;border:1px solid #1f2a3a;" +
+        "border-radius:30px;padding:4px 11px;font:inherit;font-size:13px;line-height:1}" +
+      ".series-theme:hover{border-color:#f4c95d}" +
+      ':root[data-theme="light"] .series-bar{background:rgba(247,248,250,0.85);border-bottom-color:#e2e6ec;color:#4a5666}' +
+      ':root[data-theme="light"] .series-bar a{color:#b8860b}' +
+      ':root[data-theme="light"] .series-bar .series-pdf{border-color:#e2e6ec}' +
+      ':root[data-theme="light"] .series-theme{color:#b8860b;border-color:#e2e6ec}' +
+      ':root[data-theme="light"] .series-footnav a{color:#1a1f28;background:#ffffff;border-color:#e2e6ec}';
+    var s = document.createElement("style");
+    s.textContent = css;
+    document.head.appendChild(s);
   }
 })();
