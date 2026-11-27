@@ -584,6 +584,91 @@
     </div>
   </div>
 
+  <!-- ===================== LATE 2026 (update: Jun to Nov 2026) ===================== -->
+  <div class="era">
+    <div class="year"><span>Late 2026</span><small>Reality check, functional norms, KV caches &amp; experts</small></div>
+
+    <div class="node left" style="--dot:var(--tool)">
+      <div class="card">
+        <span class="tag">Reality check · Benchmark</span>
+        <h3>Rethinking Tensor Decompositions for Post-Training LLM Compression</h3>
+        <div class="meta">Zagitov, Miasnikov … Beznosikov · arXiv 2606.03465</div>
+        <p>TT / Tucker tested head-to-head on GPT-J, LLaMA-2 7B and two MoEs (Qwen3-30B-A3B, GPT-OSS-20B). Frobenius-optimal formats "optimize the wrong geometry": heavy-tailed spectra and super-weights resist low rank, and 4/8-bit RTN dominates the frontier. Viable role: Tucker on attention + matrix FFN, as a <em>complement</em> to quantization.</p>
+        <div class="stat"><b>RTN dominates</b><b>super-weight needs rank ≥1500</b><b>TD-MoE degrades</b></div>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · TT / Tree TN · Preconditioning</span>
+        <h3>AWT &amp; EinSort: Making Weights Tensorizable</h3>
+        <div class="meta">Beatini, Maronese, Rodolà (2610.10085) · Koike-Akino, Liu, Wang (2606.08565)</div>
+        <p>Two training-free fixes that leave the TN solver untouched. AWT lifts the ASVD trick to tensor networks: scale each weight by an activation-derived diagonal before TT / TTN, undo it with an input-side rescale. EinSort reorders tensor indices to expose hidden low-rank structure in weights and KV caches.</p>
+        <div class="stat"><b>closes 12 to 60% of PPL gap</b><b>2 to 6× compression</b><b>Llama 3.1 · Ministral · Qwen2.5</b></div>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · Functional-norm SVD</span>
+        <h3>Complete-SVD (+ LACE-SVD, LEMS)</h3>
+        <div class="meta">Kalle, Rudkiewicz, Ouerfelli, Tamaazousti · arXiv 2611.26059</div>
+        <p>The distribution-aware idea moves from CNN kernels to LLMs: minimize the L2 change of the <em>logits</em>, not of the weights. Linearization + a Kronecker-factored approximation turn it into a weighted SVD with a closed form. Companion work refines rank allocation (LEMS) and cumulative-error correction (LACE-SVD).</p>
+        <div class="stat"><b>closed-form</b><b>best C4 / PTB PPL</b><b>↑ IFEval</b></div>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · KV cache · Tucker</span>
+        <h3>The KV Cache as a 4th-Order Tensor (JoLT)</h3>
+        <div class="meta">Krishnan &amp; Schulz · Univ. Trier · arXiv 2609.28029 · 2607.12550</div>
+        <p>Heads × tokens × features × layers: token &amp; feature modes are low-rank, head &amp; layer modes nearly full-rank, so Tucker (which can skip those modes) beats CP, TT and t-SVD; RoPE erodes key compressibility. JoLT adds a low-bit residual and splits one byte budget between ranks and bits.</p>
+        <div class="stat"><b>2 to 3× at &lt;0.2% PPL</b><b>RULER 64K near-lossless to 3×</b><b>MHA · GQA · MoE</b></div>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">MoE · Shared bases · BTD-like</span>
+        <h3>Experts as a Tensor Mode: SLBF</h3>
+        <div class="meta">Cao, Shao, Qiu, Atarashi, Kashima, Zhao · RIKEN AIP · arXiv 2610.09342</div>
+        <p>MoE layers stack naturally along an expert axis, but joint Tucker over it (TD-MoE) degrades on real models. SLBF rebuilds every expert from rank-<i>k</i> bases shared across experts, a structure tied to block-term decomposition (MoBE is its Tucker-1 case). Data-free, router untouched.</p>
+        <div class="stat"><b>16B to 122B MoEs</b><b>5 architectures</b><b>data-free</b></div>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · PEFT · TT-DoRA</span>
+        <h3>ChainDoRA</h3>
+        <div class="meta">Yeafi, Hasan, Islam · arXiv 2609.25058</div>
+        <p>Keeps DoRA's magnitude / direction split but builds the directional factors from one connected Tensor-Train chain: the adapter rank becomes the boundary between input- and output-side contractions, and a separate TT rank sets the cost. One controlled LLaMA-7B commonsense setting.</p>
+        <div class="stat"><b>5.35M vs 56.1M (LoRA)</b><b>72.3% vs 69.9% avg</b><b>90.6% fewer than DoRA</b></div>
+      </div>
+    </div>
+
+    <div class="node left" style="--dot:var(--tool)">
+      <div class="card">
+        <span class="tag">Cross-cutting · Survey</span>
+        <h3>Tensor Methods for Language Models</h3>
+        <div class="meta">Tarasov, Ahmadi-Asl, de Almeida, Cichocki · arXiv 2608.30505</div>
+        <p>Maps tensor methods over the whole LLM lifecycle: tokens → embeddings → pre-training → adaptation → compression → inference → interpretability. Proposes ρ<sub>gap</sub>, a compression-realization gap between theoretical memory savings and measured speedup. Tokenization is still untouched by tensor methods.</p>
+        <div class="stat"><b>7-stage taxonomy</b><b>ρ<sub>gap</sub> metric</b></div>
+      </div>
+    </div>
+
+    <div class="node right" style="--dot:var(--llm)">
+      <div class="card">
+        <span class="tag">LLM · Commercial · MoE</span>
+        <h3>Multiverse: Pulsar 16B, Comet 60B &amp; Xeon 6</h3>
+        <div class="meta">CompactifAI on Nemotron 3 / 3.5 MoEs + Llama 3.3 70B</div>
+        <p>Tensor-network compression reaches hybrid Mamba-Transformer MoEs: Pulsar 16B halves Nemotron 3 Nano 30B-A3B (31.6B → 16.15B); Comet 60B halves the 120B multimodal Nemotron 3.5 Super VL, within 5% accuracy. A compressed Llama 3.3 70B nearly doubles throughput on Intel Xeon 6 CPUs.</p>
+        <div class="stat"><b>~50% total params</b><b>+94% CPU throughput</b><b>vendor figures</b></div>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <!-- ===================== TAXONOMY STRIP ===================== -->
@@ -651,7 +736,9 @@
     <span><b>2017–20</b> Sequence models</span>
     <span><b>2019–22</b> Attention</span>
     <span><b>2023–26</b> LLMs &amp; PEFT</span>
+    <span><b>2026</b> KV caches &amp; experts</span>
   </div>
+  <p>The 2026 reality check sharpens the picture: post-training, tensor formats pay off when they optimize <em>function</em> (activations, logits) rather than weight norms, and they work best alongside quantization rather than in place of it.</p>
   <p style="margin-top:26px;font-size:13px;color:var(--faint)">Vendor figures (CompactifAI / Multiverse) are company-reported. FLOPs reductions do not always equal wall-clock speedups, and most strong results assume a fine-tuning / "healing" step.</p>
 </section>
 
